@@ -1,0 +1,188 @@
+<div class="mx-4 my-4 row justify-content-center align-items-center">
+  <div class="col-lg-8 col-md-8 col-sm-12 col-xs-8 shadow">
+    <form class="formGroup px-4 py-4" [formGroup]="applicationRegistrationForm" (ngSubmit)="register()">
+        <h2 class="text-center">{{ isEditMode ? 'Edit Application' : 'Add Application' }}</h2>
+
+      <h3>Basic Details</h3>
+      <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input id="firstName" class="form-control" formControlName="firstName" type="text"
+          [ngClass]="{'is-invalid': firstName?.invalid && (firstName?.touched || firstName?.dirty)}" />
+        <div *ngIf="firstName?.invalid && (firstName?.touched || firstName?.dirty)" class="text-danger">
+          <div *ngIf="firstName?.errors?.required">First Name is required</div>
+          <div *ngIf="firstName?.errors?.pattern">First Name must contain only letters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input id="lastName" class="form-control" formControlName="lastName" type="text" [ngClass]="{'is-invalid': lastName?.invalid && (lastName?.touched || lastName?.dirty)}" />
+        <div *ngIf="lastName?.invalid && (lastName?.touched || lastName?.dirty)" class="text-danger">
+          <div *ngIf="lastName?.errors?.required">Last Name is required</div>
+          <div *ngIf="lastName?.errors?.pattern">Last Name must contain only letters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" class="form-control" formControlName="email" type="email" [ngClass]="{'is-invalid': email?.invalid && (email?.touched || email?.dirty)}" />
+        <div *ngIf="email?.invalid && (email?.touched || email?.dirty)" class="text-danger">
+          <div *ngIf="email?.errors?.required">Email is required</div>
+          <div *ngIf="email?.errors?.email">Email must be valid</div>
+        </div>
+      </div>
+
+    <div class="form-group">
+      <label for="address">Address</label>
+      <input type="text" class="form-control" id="address" formControlName="address"
+        [ngClass]="{'is-invalid': address?.invalid && (address?.touched || address?.dirty)}" />
+      <div *ngIf="address?.invalid && (address?.touched || address?.dirty)" class="text-danger">
+        <div *ngIf="address?.errors?.required">Address is required</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <select class="form-control" id="gender" formControlName="gender"
+        [ngClass]="{'is-invalid': gender?.invalid && (gender?.touched || gender?.dirty)}">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+      <div *ngIf="gender?.invalid && (gender?.touched || gender?.dirty)" class="text-danger">
+        <div *ngIf="gender?.errors?.required">Gender is required</div>
+      </div>
+    </div>
+
+      <div class="form-group">
+        <label for="contact">Contact</label>
+        <input type="text" class="form-control" id="contact" formControlName="contact" [ngClass]="{'is-invalid': applicationRegistrationForm.get('contact').invalid && applicationRegistrationForm.get('contact').touched}" />
+        <div class="text-danger" *ngIf="applicationRegistrationForm.get('contact').invalid && applicationRegistrationForm.get('contact').touched">
+          *Contact is required
+        </div>
+      </div>
+
+      <!-- Education Details -->
+      <h3>Education Details</h3>
+      <button type="button" (click)="addEducationDetail()" class="btn btn-secondary mb-3">Add Education</button>
+    <div formArrayName="educationDetails">
+      <div *ngFor="let edu of educationDetails.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3 rounded">
+        <div class="form-group">
+          <label for="boardOrUniversity">Board/University</label>
+          <input type="text" class="form-control" formControlName="boardOrUniversity">
+        </div>
+        <div class="form-group">
+          <label for="year">Year</label>
+          <input type="number" class="form-control" formControlName="year">
+        </div>
+        <div class="form-group">
+          <label for="cgpaOrPercentage">CGPA/Percentage</label>
+          <input type="text" class="form-control" formControlName="cgpaOrPercentage">
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Work Experience -->
+      <h3>Work Experience</h3>
+      <button type="button" (click)="addWorkExperience()" class="btn btn-secondary mb-3">Add Work Experience</button>
+      <div formArrayName="workExperience">
+        <div *ngFor="let exp of workExperience.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3 rounded">
+          <div class="form-group">
+            <label for="company">Company</label>
+            <input type="text" class="form-control" formControlName="company">
+          </div>
+          <div class="form-group">
+            <label for="designation">Designation</label>
+            <input type="text" class="form-control" formControlName="designation">
+          </div>
+          <div class="form-group">
+            <label for="from">From</label>
+            <input type="date" class="form-control" formControlName="from">
+          </div>
+          <div class="form-group">
+            <label for="to">To</label>
+            <input type="date" class="form-control" formControlName="to">
+          </div>
+        </div>
+      </div>
+
+      <!-- Known Languages -->
+      <h3>Known Languages</h3>
+      <div formArrayName="knownLanguages" class="mb-3">
+        <div *ngFor="let lang of knownLanguages.controls; let i = index" [formGroupName]="i" class="mb-2 border rounded p-3">
+          <div class="form-check">
+            <input type="checkbox" (change)="onLanguageChange(i, $event)" class="form-check-input" id="language{{i}}" />
+            <label class="form-check-label" for="language{{i}}">
+              {{ lang.get('language').value || 'Language' }} 
+            </label>
+          </div>
+          <div class="form-group mt-2">
+            <div class="form-check">
+              <input type="checkbox" formControlName="canRead" class="form-check-input" id="canRead{{i}}" />
+              <label class="form-check-label" for="canRead{{i}}">Read</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" formControlName="canWrite" class="form-check-input" id="canWrite{{i}}" />
+              <label class="form-check-label" for="canWrite{{i}}">Write</label>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" formControlName="canSpeak" class="form-check-input" id="canSpeak{{i}}" />
+              <label class="form-check-label" for="canSpeak{{i}}">Speak</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical Experience -->
+      <h3>Technical Experience</h3>
+      <button type="button" (click)="addTechnicalExperience()" class="btn btn-secondary mb-3">Add Technical Experience</button>
+      <div formArrayName="technicalExperience">
+        <div *ngFor="let tech of technicalExperience.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3 rounded">
+          <div class="form-group">
+            <label for="technology">Technology</label>
+            <input type="text" class="form-control" formControlName="technology">
+          </div>
+          <div class="form-group">
+            <label for="level">Level</label>
+            <select class="form-control" formControlName="level">
+              <option value="">Select Level</option>
+              <option value="beginner">Beginner</option>
+              <option value="mediator">Mediator</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preference -->
+      <h3>Preference</h3>
+      <div formGroupName="preference" class="mb-3">
+        <div class="form-group">
+          <label for="preferredLocation">Preferred Location</label>
+          <select class="form-control" formControlName="preferredLocation">
+            <option value="">Select Location</option>
+            <option value="location1">Location 1</option>
+            <option value="location2">Location 2</option>
+          </select>
+        </div>
+
+        <label for="expectedCTC">Expected CTC</label>
+        <input type="text" class="form-control" formControlName="expectedCTC">
+        
+        <label for="currentCTC">Current CTC</label>
+        <input type="text" class="form-control" formControlName="currentCTC">
+        
+        <label for="noticePeriod">Notice Period</label>
+        <input type="text" class="form-control" formControlName="noticePeriod">
+      </div>
+
+        <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Submit' }}</button>
+      <button (click)="cancel()" type="button" class="btn btn-danger">Cancel</button>
+    </form>
+  </div>
+</div>
+
+
+
